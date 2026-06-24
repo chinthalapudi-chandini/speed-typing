@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Speed Typing Tester</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #74ebd5, #ACB6E5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .container {
+      background: #fff;
+      border-radius: 12px;
+      padding: 30px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+      width: 600px;
+      text-align: center;
+      animation: fadeIn 1s ease-in-out;
+    }
+
+    h1 {
+      color: #4a4e69;
+      margin-bottom: 20px;
+    }
+
+    #text {
+      background: #f7f7f7;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      font-size: 18px;
+      line-height: 1.5;
+    }
+
+    textarea {
+      width: 100%;
+      height: 120px;
+      padding: 15px;
+      border-radius: 8px;
+      border: 2px solid #ddd;
+      font-size: 16px;
+      outline: none;
+      transition: border-color 0.3s;
+    }
+
+    textarea:focus {
+      border-color: #74ebd5;
+    }
+
+    .stats {
+      margin-top: 20px;
+      font-size: 18px;
+      color: #333;
+    }
+
+    .btn {
+      margin-top: 20px;
+      padding: 10px 20px;
+      background: #74ebd5;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: transform 0.2s, background 0.3s;
+    }
+
+    .btn:hover {
+      background: #4a4e69;
+      color: #fff;
+      transform: scale(1.05);
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>⚡ Speed Typing Tester</h1>
+    <div id="text">The quick brown fox jumps over the lazy dog.</div>
+    <textarea id="input" placeholder="Start typing here..."></textarea>
+    <div class="stats">
+      ⏱ Time: <span id="timer">60</span>s |
+      📝 WPM: <span id="wpm">0</span> |
+      🎯 Accuracy: <span id="accuracy">0</span>%
+    </div>
+    <button class="btn" onclick="resetTest()">Restart</button>
+  </div>
+
+  <script>
+    const testText = document.getElementById("text").innerText;
+    const input = document.getElementById("input");
+    const timerDisplay = document.getElementById("timer");
+    const wpmDisplay = document.getElementById("wpm");
+    const accuracyDisplay = document.getElementById("accuracy");
+
+    let time = 60;
+    let timer;
+    let started = false;
+
+    input.addEventListener("input", () => {
+      if (!started) {
+        started = true;
+        timer = setInterval(updateTimer, 1000);
+      }
+      calculateStats();
+    });
+
+    function updateTimer() {
+      time--;
+      timerDisplay.textContent = time;
+      if (time <= 0) {
+        clearInterval(timer);
+        input.disabled = true;
+      }
+    }
+
+    function calculateStats() {
+      const typed = input.value;
+      const correctChars = typed.split("").filter((ch, i) => ch === testText[i]).length;
+      const accuracy = typed.length ? (correctChars / typed.length) * 100 : 0;
+      const words = typed.length / 5;
+      const elapsed = (60 - time) / 60;
+      const wpm = elapsed > 0 ? Math.round(words / elapsed) : 0;
+
+      wpmDisplay.textContent = wpm;
+      accuracyDisplay.textContent = accuracy.toFixed(1);
+    }
+
+    function resetTest() {
+      clearInterval(timer);
+      time = 60;
+      started = false;
+      input.disabled = false;
+      input.value = "";
+      timerDisplay.textContent = time;
+      wpmDisplay.textContent = 0;
+      accuracyDisplay.textContent = 0;
+    }
+  </script>
+</body>
+</html>
